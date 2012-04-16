@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, USPMapActivity!</string>
+    <string name="app_name">USPMap</string>
+    <string name="latitude_inital">-23.559424</string>
+    <string name="longitude_initial">-46.73201</string>
+
+</resources>
