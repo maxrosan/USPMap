@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="positions">
+        <item>ime;ime_circle;-23.559128942187566;-46.731730699539185</item>
+    </string-array>
+    
+</resources>
