@@ -9,3 +9,4 @@ Here is an example xml layout to get you started on your way to mapping glory:
                  android:apiKey="08f2M1_9v96WyXZ4sEx1MdzdMTIlTk5NO7AGS-Q"
                  />
             
+javascript:void(prompt('',gApplication.getMap().getCenter()));

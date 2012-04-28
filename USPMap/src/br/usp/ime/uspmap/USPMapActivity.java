@@ -28,6 +28,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 public class USPMapActivity extends MapActivity {
     /** Called when the activity is first created. */
@@ -73,7 +76,7 @@ public class USPMapActivity extends MapActivity {
         localInitial.setLatitude(Double.parseDouble(res.getString(R.string.latitude_inital)));
         localInitial.setLongitude(Double.parseDouble(res.getString(R.string.longitude_initial)));
         changeMyLocation(localInitial);
-                 
+        
         lastZoom = 0;
         zoomChecker = new Runnable() {
 
@@ -92,7 +95,7 @@ public class USPMapActivity extends MapActivity {
         			Iterator<Overlay> itRem = mListOverlay.iterator();
         			while (itRem.hasNext()) {
         				Overlay o = itRem.next();
-        				if (o != mMe) {
+        				if (o != mMe && !(o instanceof CircularOverlay)) {
         					itRem.remove();
         				}
         			}
@@ -161,4 +164,28 @@ public class USPMapActivity extends MapActivity {
 		super.onPause();
 		handler.removeCallbacks(zoomChecker);
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.map_menus_item, menu);
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		switch (item.getItemId()) {
+		case R.id.item1:
+			Log.i("xxx", "clicked");
+			CircularOverlay circ1 = new CircularOverlay("circular2_caminho", getResources());
+			mListOverlay.add(circ1);
+			break;
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
+	
 }
