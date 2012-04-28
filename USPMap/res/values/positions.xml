@@ -2,9 +2,21 @@
 <resources>
     
     <string-array name="positions">
-        <item>ime;ime_circle;-23.559128942187566;-46.731730699539185</item>
+        <item>ime;ime_circle;-23.559618210983214;-46.73226445913315</item>
         <item>fea;fea_botao;-23.559256791495926;-46.728831231594086</item>
-        <item>poli;fea_botao;-23.555627789706723;-46.73088312149048</item>
+        <item>poli;poli_botao;-23.555878577606652;-46.73112452030182</item>
+        <item>fisica;fisica_botao;-23.560210740100597;-46.734498739242554</item>
+        <item>quimica;quimica_botao;-23.565167227549395;-46.72661304473877</item>
+        <item>bandejaopref;band_prefeitura;-23.559315798827058;-46.73977732658386</item>
+        <item>bandejaoqui;band_quimica;-23.565693351647216;-46.725985407829285</item>
+        <item>eca;botao_eca;-23.558174985729114;-46.72643065452576</item>
+        <item>crusp;botao_crusp;-23.55750131127444;-46.72028303146362</item>
+        <item>bandejaofis;band_fisica;-23.56105650317431;-46.735442876815796</item>
+        <item>iag;botao_iag;-23.55948298612136;-46.73381745815277</item>
+        <item>odonto;botao_odonto;-23.56700619417816;-46.737942695617676</item>
+        <item>p3;btn_p3;-23.569223737340796;-46.74129545688629</item>
+        <item>p2;btn_p2;-23.550823387936116;-46.73232078552246</item>
+        <item>p1;btn_p1;-23.565491752942865;-46.71180725097656</item>
     </string-array>
     <string-array name="circular1_caminho">
         <item>-23.568157;-46.740384</item>

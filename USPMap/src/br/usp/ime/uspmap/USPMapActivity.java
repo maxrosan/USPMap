@@ -88,40 +88,8 @@ public class USPMapActivity extends MapActivity {
         		//Log.e("zoom", "z = " + mapView.getZoomLevel());
 
         		if (lastZoom != mapView.getZoomLevel()) {
-
-        			lastZoom = mapView.getZoomLevel();
-
-        			ItemPositionMapper mapper = ItemPositionMapper.getInstance();
-        			mapper.setResources(getResources());
-        			
-        			Iterator<Overlay> itRem = mListOverlay.iterator();
-        			while (itRem.hasNext()) {
-        				Overlay o = itRem.next();
-        				if (o != mMe && !(o instanceof CircularOverlay)) {
-        					itRem.remove();
-        				}
-        			}
-
-        			ArrayList<ItemPosition> arrayItens = mapper.getPositions();
-        			Iterator<ItemPosition> it = arrayItens.iterator();
-        			while (it.hasNext()) {
-        				ItemPosition item = it.next();
-        				Drawable draw = getResources().getDrawable(item.getIcon());
-        				if (lastZoom <= 16) {
-        					BitmapDrawable bd = ((BitmapDrawable) draw);
-        					int dstWidth = bd.getBitmap().getWidth() >> 1;
-        					int dstHeight = bd.getBitmap().getHeight() >> 1;
-        					draw = new BitmapDrawable(Bitmap.createScaledBitmap(bd.getBitmap(), dstWidth, dstHeight, true));
-        				}
-        				USPMapOverlay newOL = new USPMapOverlay(draw);
-        				GeoPoint point = new GeoPoint((int)(item.getLatitude() * 1E6), 
-        						(int)(item.getLongitude() * 1E6));
-        				OverlayItem oItem = new OverlayItem(point, item.getName(), "");
-        				newOL.addOverlay(oItem);
-        				mListOverlay.add(newOL);
-        			}
-        			
-        			changeMyLocation(myLocation);
+        			drawPlaces();
+        			drawMe();
         		}
 
         		handler.removeCallbacks(zoomChecker);
@@ -133,15 +101,48 @@ public class USPMapActivity extends MapActivity {
         //XXX: It is necessary to check if the GPS is enabled
     }
     
-    synchronized public void changeMyLocation(Location local) {
-    	myLocation = local;
- 
-    	GeoPoint point = new GeoPoint((int)(local.getLatitude() * 1E6), 
-    			(int)(local.getLongitude() * 1E6));
+    synchronized public void drawPlaces() {
+		lastZoom = mapView.getZoomLevel();
+
+		ItemPositionMapper mapper = ItemPositionMapper.getInstance();
+		mapper.setResources(getResources());
+		
+		Iterator<Overlay> itRem = mListOverlay.iterator();
+		while (itRem.hasNext()) {
+			Overlay o = itRem.next();
+			if (o != mMe && !(o instanceof CircularOverlay)) {
+				itRem.remove();
+			}
+		}
+
+		ArrayList<ItemPosition> arrayItens = mapper.getPositions();
+		Iterator<ItemPosition> it = arrayItens.iterator();
+		while (it.hasNext()) {
+			ItemPosition item = it.next();
+			Drawable draw = getResources().getDrawable(item.getIcon());
+			if (lastZoom <= 16) {
+				BitmapDrawable bd = ((BitmapDrawable) draw);
+				int dstWidth = bd.getBitmap().getWidth() >> 1;
+				int dstHeight = bd.getBitmap().getHeight() >> 1;
+				draw = new BitmapDrawable(Bitmap.createScaledBitmap(bd.getBitmap(), dstWidth, dstHeight, true));
+			}
+			USPMapOverlay newOL = new USPMapOverlay(draw);
+			GeoPoint point = new GeoPoint((int)(item.getLatitude() * 1E6), 
+					(int)(item.getLongitude() * 1E6));
+			OverlayItem oItem = new OverlayItem(point, item.getName(), "");
+			newOL.addOverlay(oItem);
+			mListOverlay.add(newOL);
+		}    	
+    }
+    
+    synchronized public void drawMe() {
+    	
+    	GeoPoint point = new GeoPoint((int)(myLocation.getLatitude() * 1E6), 
+    			(int)(myLocation.getLongitude() * 1E6));
     	
     	if (mMe != null) {
     		mListOverlay.remove(mMe);
-    	}
+    	}    	
     	
         Drawable drawMe = getResources().getDrawable(R.drawable.ic_launcher);
 		if (lastZoom <= 17) {
@@ -154,8 +155,17 @@ public class USPMapActivity extends MapActivity {
         OverlayItem oitem = new OverlayItem(point, "Me!", "");
         mMe.addOverlay(oitem);
         
-        mListOverlay.add(mMe);
+        mListOverlay.add(mMe);    	
+    }
+    
+    public void changeMyLocation(Location local) {
+    	myLocation = local;
+ 
+    	GeoPoint point = new GeoPoint((int)(local.getLatitude() * 1E6), 
+    			(int)(local.getLongitude() * 1E6));
     	
+    	drawMe();
+   	
     	mc.animateTo(point);
     }
 
@@ -194,7 +204,8 @@ public class USPMapActivity extends MapActivity {
 				circ1.setColor(Color.BLUE);
 				mListOverlay.add(circ1);
 				
-				changeMyLocation(myLocation);
+				drawPlaces();
+				drawMe();
 			}
 			break;
 		case R.id.circ2:
@@ -203,7 +214,8 @@ public class USPMapActivity extends MapActivity {
 				circ2.setColor(Color.GREEN);
 				mListOverlay.add(circ2);
 				
-				changeMyLocation(myLocation);
+				drawPlaces();
+				drawMe();
 			}
 			break;
 			
