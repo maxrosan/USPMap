@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/item1"
-          android:icon="@android:drawable/ic_menu_add"
-          android:title="Help" />
+
+    <item
+        android:id="@+id/circ1"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="Linha 8012-10"/>
+
+    <item
+        android:id="@+id/circ2"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="Linha 8022-10"/>
+   
+	<item
+        android:id="@+id/remover"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="Remover rotas"/>    
+    
 </menu>

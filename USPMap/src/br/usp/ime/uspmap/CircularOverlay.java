@@ -21,6 +21,7 @@ import com.google.android.maps.Projection;
 public class CircularOverlay extends Overlay {
 
 	private ArrayList<GeoPoint> points;
+	private int                 color = Color.RED;
 	
 	public CircularOverlay(String name, Resources res) {
 		//R.array.circular1_caminho
@@ -57,6 +58,10 @@ public class CircularOverlay extends Overlay {
 		
 	}
 	
+	public void setColor(int _color) {
+		color = _color;
+	}
+	
 	@Override
 	 public void draw(Canvas canvas, MapView mapv, boolean shadow) {
 		 
@@ -65,7 +70,7 @@ public class CircularOverlay extends Overlay {
 		Paint paint = new Paint();
 		
 		paint.setDither(true);
-		paint.setColor(Color.RED);
+		paint.setColor(color);
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		paint.setStrokeJoin(Paint.Join.ROUND);
 		paint.setStrokeCap(Paint.Cap.ROUND);

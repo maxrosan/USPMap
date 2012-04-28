@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
@@ -40,10 +41,11 @@ public class USPMapActivity extends MapActivity {
 	private Location            myLocation;
 	private List<Overlay>       mListOverlay;
 	private MapView             mapView;
-	USPMapOverlay               mMe = null;
-	Runnable                    zoomChecker;
-	Handler                     handler;
-	int                         lastZoom;
+	private USPMapOverlay       mMe = null;
+	private Runnable            zoomChecker;
+	private Handler             handler;
+	private int                 lastZoom;
+	private CircularOverlay     circ1 = null, circ2 = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {    	
@@ -105,7 +107,7 @@ public class USPMapActivity extends MapActivity {
         			while (it.hasNext()) {
         				ItemPosition item = it.next();
         				Drawable draw = getResources().getDrawable(item.getIcon());
-        				if (lastZoom <= 17) {
+        				if (lastZoom <= 16) {
         					BitmapDrawable bd = ((BitmapDrawable) draw);
         					int dstWidth = bd.getBitmap().getWidth() >> 1;
         					int dstHeight = bd.getBitmap().getHeight() >> 1;
@@ -117,7 +119,9 @@ public class USPMapActivity extends MapActivity {
         				OverlayItem oItem = new OverlayItem(point, item.getName(), "");
         				newOL.addOverlay(oItem);
         				mListOverlay.add(newOL);
-        			}								
+        			}
+        			
+        			changeMyLocation(myLocation);
         		}
 
         		handler.removeCallbacks(zoomChecker);
@@ -129,7 +133,7 @@ public class USPMapActivity extends MapActivity {
         //XXX: It is necessary to check if the GPS is enabled
     }
     
-    public void changeMyLocation(Location local) {
+    synchronized public void changeMyLocation(Location local) {
     	myLocation = local;
  
     	GeoPoint point = new GeoPoint((int)(local.getLatitude() * 1E6), 
@@ -140,6 +144,12 @@ public class USPMapActivity extends MapActivity {
     	}
     	
         Drawable drawMe = getResources().getDrawable(R.drawable.ic_launcher);
+		if (lastZoom <= 17) {
+			BitmapDrawable bd = ((BitmapDrawable) drawMe);
+			int dstWidth = bd.getBitmap().getWidth() >> 1;
+			int dstHeight = bd.getBitmap().getHeight() >> 1;
+			drawMe = new BitmapDrawable(Bitmap.createScaledBitmap(bd.getBitmap(), dstWidth, dstHeight, true));
+		}
         mMe = new USPMapOverlay(drawMe);
         OverlayItem oitem = new OverlayItem(point, "Me!", "");
         mMe.addOverlay(oitem);
@@ -178,10 +188,32 @@ public class USPMapActivity extends MapActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
 		switch (item.getItemId()) {
-		case R.id.item1:
-			Log.i("xxx", "clicked");
-			CircularOverlay circ1 = new CircularOverlay("circular2_caminho", getResources());
-			mListOverlay.add(circ1);
+		case R.id.circ1:
+			if (circ1 == null) {
+				circ1 = new CircularOverlay("circular1_caminho", getResources());
+				circ1.setColor(Color.BLUE);
+				mListOverlay.add(circ1);
+				
+				changeMyLocation(myLocation);
+			}
+			break;
+		case R.id.circ2:
+			if (circ2 == null) {
+				circ2 = new CircularOverlay("circular2_caminho", getResources());
+				circ2.setColor(Color.GREEN);
+				mListOverlay.add(circ2);
+				
+				changeMyLocation(myLocation);
+			}
+			break;
+			
+		case R.id.remover:
+			if (circ1 != null) {
+				mListOverlay.remove(circ1);
+			}
+			if (circ2 != null) {
+				mListOverlay.remove(circ2);
+			}
 			break;
 		}
 		
