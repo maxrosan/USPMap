@@ -14,6 +14,11 @@
 	<item
         android:id="@+id/remover"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="Remover rotas"/>    
-    
+        android:title="Remover rotas"/>
+
+	<item
+        android:id="@+id/ativargps"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="Ativar GPS"/>	
+	
 </menu>

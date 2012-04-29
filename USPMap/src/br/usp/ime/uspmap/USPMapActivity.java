@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -46,6 +48,7 @@ public class USPMapActivity extends MapActivity {
 	private Handler             handler;
 	private int                 lastZoom;
 	private CircularOverlay     circ1 = null, circ2 = null;
+	private boolean             GPSon = false;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {    	
@@ -67,7 +70,6 @@ public class USPMapActivity extends MapActivity {
         
         mapLocalListener = new MapLocationListener();
         mapLocalListener.setMapOverlay(this);
-        localMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mapLocalListener);
         mc.setZoom(18);
         
         Resources res = getResources();
@@ -77,6 +79,7 @@ public class USPMapActivity extends MapActivity {
         Location localInitial = new Location("initialLocal");
         localInitial.setLatitude(Double.parseDouble(res.getString(R.string.latitude_inital)));
         localInitial.setLongitude(Double.parseDouble(res.getString(R.string.longitude_initial)));
+        
         changeMyLocation(localInitial);
         
         lastZoom = 0;
@@ -99,6 +102,17 @@ public class USPMapActivity extends MapActivity {
 		};
 		
         //XXX: It is necessary to check if the GPS is enabled
+    }
+    
+    private void turnGPSOn() {
+    	GPSon = true;
+    	
+    	localMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mapLocalListener);
+    }
+    
+    private void turnGPSOff() {
+    	GPSon = false;
+    	localMan.removeUpdates(mapLocalListener);
     }
     
     synchronized public void drawPlaces() {
@@ -137,29 +151,34 @@ public class USPMapActivity extends MapActivity {
     
     synchronized public void drawMe() {
     	
-    	GeoPoint point = new GeoPoint((int)(myLocation.getLatitude() * 1E6), 
-    			(int)(myLocation.getLongitude() * 1E6));
-    	
-    	if (mMe != null) {
-    		mListOverlay.remove(mMe);
-    	}    	
-    	
-        Drawable drawMe = getResources().getDrawable(R.drawable.ic_launcher);
-		if (lastZoom <= 17) {
-			BitmapDrawable bd = ((BitmapDrawable) drawMe);
-			int dstWidth = bd.getBitmap().getWidth() >> 1;
-			int dstHeight = bd.getBitmap().getHeight() >> 1;
-			drawMe = new BitmapDrawable(Bitmap.createScaledBitmap(bd.getBitmap(), dstWidth, dstHeight, true));
-		}
-        mMe = new USPMapOverlay(drawMe);
-        OverlayItem oitem = new OverlayItem(point, "Me!", "");
-        mMe.addOverlay(oitem);
-        
-        mListOverlay.add(mMe);    	
+    	if (GPSon) {
+
+    		GeoPoint point = new GeoPoint((int)(myLocation.getLatitude() * 1E6), 
+    				(int)(myLocation.getLongitude() * 1E6));
+
+    		if (mMe != null) {
+    			mListOverlay.remove(mMe);
+    		}    	
+
+    		Drawable drawMe = getResources().getDrawable(R.drawable.ic_launcher);
+    		if (lastZoom <= 17) {
+    			BitmapDrawable bd = ((BitmapDrawable) drawMe);
+    			int dstWidth = bd.getBitmap().getWidth() >> 1;
+    		int dstHeight = bd.getBitmap().getHeight() >> 1;
+    		drawMe = new BitmapDrawable(Bitmap.createScaledBitmap(bd.getBitmap(), dstWidth, dstHeight, true));
+    		}
+    		mMe = new USPMapOverlay(drawMe);
+    		OverlayItem oitem = new OverlayItem(point, "Me!", "");
+    		mMe.addOverlay(oitem);
+
+    		mListOverlay.add(mMe); 
+    	}
     }
     
     public void changeMyLocation(Location local) {
     	myLocation = local;
+    	
+    	Log.i("USPMap", "local changed");
  
     	GeoPoint point = new GeoPoint((int)(local.getLatitude() * 1E6), 
     			(int)(local.getLongitude() * 1E6));
@@ -195,6 +214,19 @@ public class USPMapActivity extends MapActivity {
 	}
 	
 	@Override
+	public boolean onPrepareOptionsMenu (Menu menu) {
+		
+		if (GPSon) {
+			menu.findItem(R.id.ativargps).setTitle("Desligar GPS");
+		} else {
+			menu.findItem(R.id.ativargps).setTitle("Ativar GPS");
+		}
+		
+		return true;
+		
+	}
+	
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
 		switch (item.getItemId()) {
@@ -227,6 +259,16 @@ public class USPMapActivity extends MapActivity {
 				mListOverlay.remove(circ2);
 			}
 			break;
+			
+		case R.id.ativargps:
+			if (!GPSon) {
+				turnGPSOn();
+				changeMyLocation(localMan.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+			} else {
+				turnGPSOff();
+			}
+			break;
+
 		}
 		
 		return super.onOptionsItemSelected(item);

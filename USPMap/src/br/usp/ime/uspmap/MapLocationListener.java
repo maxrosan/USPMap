@@ -33,7 +33,7 @@ public class MapLocationListener implements LocationListener {
 
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 		// TODO Auto-generated method stub
-		
+		Log.i("GPSMAPS", "Location status changed");
 	}
 
 }
