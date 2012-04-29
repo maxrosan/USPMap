@@ -106,7 +106,6 @@ public class USPMapActivity extends MapActivity {
     
     private void turnGPSOn() {
     	GPSon = true;
-    	
     	localMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mapLocalListener);
     }
     
@@ -254,9 +253,11 @@ public class USPMapActivity extends MapActivity {
 		case R.id.remover:
 			if (circ1 != null) {
 				mListOverlay.remove(circ1);
+				circ1 = null;
 			}
 			if (circ2 != null) {
 				mListOverlay.remove(circ2);
+				circ2 = null;
 			}
 			break;
 			
