@@ -241,7 +241,7 @@ public class USPMapActivity extends MapActivity {
 		
 	}
 	
-	public void startGPS() {
+	private void startGPS() {
 		if (gpsChecker == null) {
 			gpsChecker = new Runnable() {
 
@@ -337,6 +337,10 @@ public class USPMapActivity extends MapActivity {
 			} else {
 				turnGPSOff();
 			}
+			break;
+			
+		case R.id.sair:
+			System.exit(0);
 			break;
 
 		}

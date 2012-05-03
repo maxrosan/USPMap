@@ -3,22 +3,27 @@
 
     <item
         android:id="@+id/circ1"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@android:drawable/ic_menu_directions"
         android:title="Linha 8012-10"/>
 
     <item
         android:id="@+id/circ2"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@android:drawable/ic_menu_directions"
         android:title="Linha 8022-10"/>
    
 	<item
         android:id="@+id/remover"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@android:drawable/ic_menu_delete"
         android:title="Remover rotas"/>
 
 	<item
         android:id="@+id/ativargps"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@android:drawable/ic_menu_mylocation"
         android:title="Ativar GPS"/>	
-	
+
+	<item
+        android:id="@+id/sair"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:title="Sair"/>	
+		
 </menu>
