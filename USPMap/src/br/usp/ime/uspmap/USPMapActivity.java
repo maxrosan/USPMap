@@ -19,8 +19,11 @@ import dataresource.ItemPosition;
 import dataresource.ItemPositionMapper;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -31,6 +34,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -237,6 +241,40 @@ public class USPMapActivity extends MapActivity {
 		
 	}
 	
+	public void startGPS() {
+		if (gpsChecker == null) {
+			gpsChecker = new Runnable() {
+
+				private Location localNet = null;
+
+				public void run() {
+
+					Location local = localMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+					if (local == null) {
+
+						if (localNet == null) {
+							localNet = localMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+							if (localNet != null) {
+								drawPlaces();
+								changeMyLocation(localNet);
+							}
+						}
+
+						handler.removeCallbacks(gpsChecker);
+						handler.postDelayed(gpsChecker, 500);
+					} else {
+						localNet = null;
+						drawPlaces();
+						changeMyLocation(local);
+					}
+				}
+			};
+		}
+
+		handler.postDelayed(gpsChecker, 0);		
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
@@ -277,39 +315,25 @@ public class USPMapActivity extends MapActivity {
 			break;
 			
 		case R.id.ativargps:
-			if (!GPSon) { 
-				turnGPSOn();
-
-				if (gpsChecker == null) {
-					gpsChecker = new Runnable() {
-						
-						private Location localNet = null;
-
-						public void run() {
-
-							Location local = localMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-							if (local == null) {
-								
-								if (localNet == null) {
-									localNet = localMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-									drawPlaces();
-									changeMyLocation(localNet);
-								}
-								
-								handler.removeCallbacks(gpsChecker);
-								handler.postDelayed(gpsChecker, 500);
-							} else {
-								localNet = null;
-								drawPlaces();
-								changeMyLocation(local);
-							}
+			if (!localMan.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage("GPS está desativado. Deseja ativá-lo?")
+					.setCancelable(false)
+					.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface arg0, int arg1) {
+							startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 						}
-					};
-				}
-				
-				handler.postDelayed(gpsChecker, 0);
-				
+					})
+					.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+						}
+					});
+				AlertDialog alert = builder.create();
+				alert.show();
+			} else if (!GPSon) { 
+				turnGPSOn();
+				startGPS();				
 			} else {
 				turnGPSOff();
 			}
