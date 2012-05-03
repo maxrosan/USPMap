@@ -246,6 +246,7 @@ public class USPMapActivity extends MapActivity {
 				
 				drawPlaces();
 				drawMe();
+				mapView.invalidate();
 			}
 			break;
 		case R.id.circ2:
@@ -256,6 +257,7 @@ public class USPMapActivity extends MapActivity {
 				
 				drawPlaces();
 				drawMe();
+				mapView.invalidate();
 			}
 			break;
 			
@@ -268,6 +270,7 @@ public class USPMapActivity extends MapActivity {
 				mListOverlay.remove(circ2);
 				circ2 = null;
 			}
+			mapView.invalidate();
 			break;
 			
 		case R.id.ativargps:
