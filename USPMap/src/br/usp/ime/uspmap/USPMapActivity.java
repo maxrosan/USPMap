@@ -19,6 +19,7 @@ import dataresource.ItemPosition;
 import dataresource.ItemPositionMapper;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -49,6 +50,7 @@ public class USPMapActivity extends MapActivity {
 	private int                 lastZoom;
 	private CircularOverlay     circ1 = null, circ2 = null;
 	private boolean             GPSon = false;
+	private Runnable            gpsChecker = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {    	
@@ -107,6 +109,7 @@ public class USPMapActivity extends MapActivity {
     private void turnGPSOn() {
     	GPSon = true;
     	localMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0, mapLocalListener);
+    	mapView.invalidate();
     }
     
     private void turnGPSOff() {
@@ -276,12 +279,37 @@ public class USPMapActivity extends MapActivity {
 		case R.id.ativargps:
 			if (!GPSon) { 
 				turnGPSOn();
-				
-				Location local = localMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-				if (local != null) {
-					drawPlaces();
-					changeMyLocation(local);
+
+				if (gpsChecker == null) {
+					gpsChecker = new Runnable() {
+						
+						private Location localNet = null;
+
+						public void run() {
+
+							Location local = localMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+							if (local == null) {
+								
+								if (localNet == null) {
+									localNet = localMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+									drawPlaces();
+									changeMyLocation(localNet);
+								}
+								
+								handler.removeCallbacks(gpsChecker);
+								handler.postDelayed(gpsChecker, 500);
+							} else {
+								localNet = null;
+								drawPlaces();
+								changeMyLocation(local);
+							}
+						}
+					};
 				}
+				
+				handler.postDelayed(gpsChecker, 0);
+				
 			} else {
 				turnGPSOff();
 			}
