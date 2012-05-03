@@ -64,7 +64,7 @@ public class USPMapActivity extends MapActivity {
         
         handler = new Handler();
         
-        Log.i("debug", "Setting local listener...[0]");
+        Log.i("USPMap", "Setting local listener...[0]");
         
         localMan = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         
@@ -106,17 +106,21 @@ public class USPMapActivity extends MapActivity {
     
     private void turnGPSOn() {
     	GPSon = true;
-    	localMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mapLocalListener);
+    	localMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0, mapLocalListener);
     }
     
     private void turnGPSOff() {
     	GPSon = false;
     	localMan.removeUpdates(mapLocalListener);
+    	if (mMe != null) {
+    		mListOverlay.remove(mMe);
+    		mapView.invalidate();
+    	}
     }
     
     synchronized public void drawPlaces() {
 		lastZoom = mapView.getZoomLevel();
-
+		
 		ItemPositionMapper mapper = ItemPositionMapper.getInstance();
 		mapper.setResources(getResources());
 		
@@ -145,7 +149,10 @@ public class USPMapActivity extends MapActivity {
 			OverlayItem oItem = new OverlayItem(point, item.getName(), "");
 			newOL.addOverlay(oItem);
 			mListOverlay.add(newOL);
-		}    	
+		}
+		
+		mapView.invalidate();
+		
     }
     
     synchronized public void drawMe() {
@@ -170,8 +177,11 @@ public class USPMapActivity extends MapActivity {
     		OverlayItem oitem = new OverlayItem(point, "Me!", "");
     		mMe.addOverlay(oitem);
 
-    		mListOverlay.add(mMe); 
+    		mListOverlay.add(mMe);
+    		
+    		mapView.invalidate();
     	}
+    
     }
     
     public void changeMyLocation(Location local) {
@@ -182,9 +192,8 @@ public class USPMapActivity extends MapActivity {
     	GeoPoint point = new GeoPoint((int)(local.getLatitude() * 1E6), 
     			(int)(local.getLongitude() * 1E6));
     	
-    	drawMe();
-   	
     	mc.animateTo(point);
+    	drawMe();
     }
 
 	@Override
@@ -262,9 +271,14 @@ public class USPMapActivity extends MapActivity {
 			break;
 			
 		case R.id.ativargps:
-			if (!GPSon) {
+			if (!GPSon) { 
 				turnGPSOn();
-				changeMyLocation(localMan.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+				
+				Location local = localMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+				if (local != null) {
+					drawPlaces();
+					changeMyLocation(local);
+				}
 			} else {
 				turnGPSOff();
 			}

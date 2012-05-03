@@ -19,6 +19,7 @@ public class MapLocationListener implements LocationListener {
 		// TODO Auto-generated method stub
 		assert(mapOverlay != null);
 		mapOverlay.changeMyLocation(arg0);
+		Log.i("USPMap", "location changed");
 	}
 
 	public void onProviderDisabled(String arg0) {
@@ -28,12 +29,12 @@ public class MapLocationListener implements LocationListener {
 
 	public void onProviderEnabled(String arg0) {
 		// TODO Auto-generated method stub
-		Log.i("debug", "proved enabled: " + arg0);
+		Log.i("USPMap", "proved enabled: " + arg0);
 	}
 
 	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 		// TODO Auto-generated method stub
-		Log.i("GPSMAPS", "Location status changed");
+		Log.i("USPMap", "Location status changed");
 	}
 
 }
