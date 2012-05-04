@@ -17,6 +17,11 @@
         <item>p3;btn_p3;-23.569223737340796;-46.74129545688629</item>
         <item>p2;btn_p2;-23.550823387936116;-46.73232078552246</item>
         <item>p1;btn_p1;-23.565491752942865;-46.71180725097656</item>
+       	<item>bancos;botao_praca_bancos;-23.559778022004167;-46.726999282836914</item>
+       	<item>iee;botao_iee;-23.55760457546607;-46.733726263046265</item>
+       	<item>histegeo;hist_e_geo_botao;-23.562866024488788;-46.72459602355957</item>
+       	<item>fau;botao_fau;-23.559748518445687;-46.73007845878601</item>
+       	<item>mac;botao_museu_mac;-23.560279581484547;-46.72203183174133</item>
     </string-array>
     <string-array name="circular1_caminho">
         <item>-23.568157;-46.740384</item>
